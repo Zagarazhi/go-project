@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package mygrpc;
+
+option go_package = "/generated";
+
+enum IntervalType {
+    INTERVAL_1S = 0;
+    INTERVAL_1M = 1;
+    INTERVAL_3M = 2;
+    INTERVAL_5M = 3;
+    INTERVAL_15M = 4;
+    INTERVAL_30M = 5;
+    INTERVAL_1H = 6;
+    INTERVAL_2H = 7;
+    INTERVAL_4H = 8;
+    INTERVAL_6H = 9;
+    INTERVAL_8H = 10;
+    INTERVAL_12H = 11;
+    INTERVAL_1D = 12;
+    INTERVAL_3D = 13;
+    INTERVAL_1W = 14;
+    INTERVAL_1MONTH = 15;
+}
+
+message UserData {
+    string symbol = 1;
+    IntervalType interval = 2;
+}
+
+message ApiServiceRequest {
+    string symbol = 1;
+    IntervalType interval = 2;
+    int32 limit = 3;
+}
+
+message ApiServiceResponce {
+    string symbol = 1;
+    IntervalType interval = 2;
+    int64 open_time = 3;
+    string open_price = 4;
+    string high_price = 5;
+    string low_price = 6;
+    string close_price = 7;
+    string volume = 8;
+    int64 close_time = 9;
+    string quote_asset_volume = 10;
+    int32 number_of_trades = 11;
+    string taker_buy_base_asset_volume = 12;
+    string taker_buy_quote_asset_volume = 13;
+}
+
+service ApiService {
+    rpc CallApiService (ApiServiceRequest) returns (ApiServiceResponce);
+}
+
+service UserService {
+    rpc ProcessData (UserData) returns (ApiServiceResponce);
+}

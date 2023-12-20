@@ -1,0 +1,10 @@
+server:
+  adress: "localhost"
+  port: 8080
+
+api:
+  grpcAdress: "localhost"
+  grpcPort: 50051
+
+database:
+  dsn: "user=[имя пользователя] password=[пароль пользователя] dbname=[название проекта] port=[порт]"

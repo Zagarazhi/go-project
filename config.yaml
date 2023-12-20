@@ -7,4 +7,5 @@ api:
   grpcPort: 50051
 
 database:
-  dsn: "user=[имя пользователя] password=[пароль пользователя] dbname=[название проекта] port=[порт]"
+  dsn: "user=[имя пользователя] password=[пароль пользователя] dbname=[название проекта] port=[5432]"
+  shouldMigrate: true

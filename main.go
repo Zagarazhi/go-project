@@ -17,6 +17,24 @@ import (
 	"gorm.io/gorm"
 )
 
+// Kline структура представляет модель для таблицы klines.
+type Kline struct {
+	gorm.Model               `gorm:"-"`
+	Symbol                   string `gorm:"column:symbol"`
+	Interval                 string `gorm:"column:interval"`
+	OpenTime                 int64  `gorm:"column:open_time"`
+	OpenPrice                string `gorm:"column:open_price"`
+	HighPrice                string `gorm:"column:high_price"`
+	LowPrice                 string `gorm:"column:low_price"`
+	ClosePrice               string `gorm:"column:close_price"`
+	Volume                   string `gorm:"column:volume"`
+	CloseTime                int64  `gorm:"column:close_time"`
+	QuoteAssetVolume         string `gorm:"column:quote_asset_volume"`
+	NumberOfTrades           int    `gorm:"column:number_of_trades"`
+	TakerBuyBaseAssetVolume  string `gorm:"column:taker_buy_base_asset_volume"`
+	TakerBuyQuoteAssetVolume string `gorm:"column:taker_buy_quote_asset_volume"`
+}
+
 func main() {
 	// Инициализация viper
 	viper.SetConfigName("config") // имя файла конфигурации без расширения
@@ -85,6 +103,9 @@ func InitDB() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	if viper.GetBool("database.shouldMigrate") {
+		Migrate(db)
+	}
 	return db, nil
 }
 
@@ -104,4 +125,20 @@ func runApiServiceServer(grpcAdres string, grpcPort string) {
 			log.Fatalf("Failed to serve gRPC server: %v", err)
 		}
 	}()
+}
+
+// Создает таблицу klines и индекс idx_symbol_interval.
+func Migrate(db *gorm.DB) error {
+	// Миграция для создания таблицы klines.
+	if err := db.AutoMigrate(&Kline{}); err != nil {
+		return err
+	}
+
+	// Миграция для создания индекса idx_symbol_interval.
+	if err := db.Exec("CREATE INDEX idx_symbol_interval ON klines (symbol, interval)").Error; err != nil {
+		return err
+	}
+
+	fmt.Println("Migration successful.")
+	return nil
 }
